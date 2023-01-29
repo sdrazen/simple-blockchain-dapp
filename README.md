@@ -13,6 +13,12 @@ npm install
 
 ## Getting started
 
+As this application was written in Typescript (Angular), You can start it like so:
+
+```bash
+ng serve
+```
+
 Smart contract are already deployed on Goerli Test Network but You can deploy them to Ganache with truffle:
 
 ```bash
