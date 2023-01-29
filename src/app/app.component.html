@@ -1,0 +1,71 @@
+<!-- Title -->
+<div class="panel panel-primary panel-margin">
+  <div class="title panel-body">
+    <div class="align-center">
+      <h1><b>SIMPLE BLOCKCHAIN DECENTRALIZED APPLICATION</b></h1>
+    </div>
+  </div>
+</div>
+
+<!-- General Data -->
+<div class="panel panel-primary panel-margin">
+  <div class="panel-heading">
+    <h3 class="panel-title">General data</h3>
+  </div>
+  <div class="panel-body">
+    <div class="align-center">
+      <b>Connected network: {{ networkName }}</b>
+    </div>
+  </div>
+</div>
+
+<!-- Smart Contract Funding -->
+<div class="panel panel-primary panel-margin">
+  <div class="panel-heading">
+    <h3 class="panel-title">Smart contract funding</h3>
+  </div>
+  <div class="row">
+    <!-- Show Account -->
+    <div class="col-md-4 padding-top-10 padding-bottom-10 padding-left-30">
+      <b>Account address:</b><br>
+      {{ accountAddress }}
+      <br><br>
+      <b>Account balance (ETH):</b><br>
+      {{ accountBalance }}
+      <br><br>
+      <div *ngIf="transactionText != ''">
+        <b>Transaction status:</b><br>
+        {{ transactionText }}
+      </div>
+    </div>
+    <!-- Show Contract Balance and Transaction Interaction -->
+    <div class="col-md-4 padding-top-10 padding-bottom-10 align-center">
+      Contract so far funded with
+      <h2><b>{{ simpleFundContractBalance }} ETH</b></h2>
+      <div class="input-group padding-top-10 inline-block">
+        <input type="text" class="form-control width-100" name="ethFundAmount" placeholder="0.1" [(ngModel)]="ethFundAmount">
+        <button id="fund" [disabled]="focusChanged || !interfaceEnabled" type="button" class="btn btn-primary width-100" (click)="onFundClick()">Fund</button>
+      </div>
+      <div class="padding-top-10">
+        <i>Latest ETH/USD price: ${{ priceRounded }}</i>
+      </div>
+    </div>
+    <!-- Show Transaction Data (funders) -->
+    <div class="col-md-4 padding-top-10 padding-bottom-10">
+      <b>Latest contract funders:</b><br><br>
+      <div *ngFor="let funder of funders">
+        {{ funder }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Alert Danger -->
+<div class="alert alert-danger panel-margin" *ngIf="dangerAlertText != ''">
+  {{ dangerAlertText }}
+</div>
+
+<!-- Alert Success -->
+<div class="alert alert-success panel-margin" *ngIf="successAlertText != ''">
+  {{ successAlertText }}
+</div>
