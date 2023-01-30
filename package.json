@@ -1,7 +1,7 @@
 {
   "name": "simple-blockchain-dapp",
   "version": "0.0.0",
-  "description": "This web application can ineract with smart contracts on ethereum blockchain.",
+  "description": "This web application can ineract with smart contracts on ethereum blockchain. For demonstration and learning purposes only!",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -19,7 +19,9 @@
     "goerli",
     "test",
     "smart",
-    "contracts"
+    "contracts",
+    "angular",
+    "typescript"
   ],
   "bugs": {
     "url": "https://github.com/sdrazen/simple-blockchain-dapp/issues",

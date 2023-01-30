@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
   priceRounded: string = "";
 
   // Alerts
-  ALERT_TIMEOUT: number = 4000;
+  ALERT_TIMEOUT: number = 10000;
   dangerAlertText: string = "";
   successAlertText: string = "";
 
@@ -69,9 +69,9 @@ export class AppComponent implements OnInit {
       if (this.netId == 1) {
         this.networkName = "Ethereum Main Network (Mainnet)";
       } else if (this.netId == 5) {
-        this.networkName = "Goerli Test Network";
+        this.networkName = "Goerli Testnet Network";
       } else if (this.netId == 5777) {
-        this.networkName = "Ganache (localhost)";
+        this.networkName = "Ganache (local blockchain)";
       } else {
         this.networkName = "Unknown Network";
       }
@@ -81,7 +81,7 @@ export class AppComponent implements OnInit {
         // Reset inerface
         this.resetInterface();
         // Alert Danger
-        this.showAlertDanger("MetaMask NOT connected to Goerli Test Network or Ganache (local network). Please choose one of those two networks in Your MetaMask.")
+        this.showAlertDanger("MetaMask NOT connected to Goerli Testnet Network or Ganache (local blockchain). Please choose one of those two networks in Your MetaMask.")
       } else {
         const accounts = await this.web3.eth.getAccounts();
         if (typeof accounts[0] === 'undefined') {
@@ -199,7 +199,8 @@ export class AppComponent implements OnInit {
             // Reset transaction text
             this.transactionText = "";
             // Alert Danger
-            this.showAlertDanger("There was a problem with funding SimpleFundContract contract.")
+            // this.showAlertDanger("There was a problem with funding SimpleFundContract contract.")
+            this.showAlertDanger(e.message);
           }
         }
       } catch (e) {
@@ -216,6 +217,8 @@ export class AppComponent implements OnInit {
         provider.eth.getTransactionReceipt(transactionResponse.transactionHash)
           .then(() => {
             this.transactionText = "Completed!";
+            // Alert Success
+            this.showAlertSuccess("Transaction successfully completed!");
             setTimeout(() => {
               this.transactionText = "";
             }, this.ALERT_TIMEOUT);
