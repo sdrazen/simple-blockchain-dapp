@@ -47,7 +47,7 @@ export class AppComponent implements OnInit, OnDestroy {
   transactionText: string = "";
   isTransactionInProgress: boolean = false;
   transactions: any[] = [];
-  numberOfBlocksToCheck: number = 1;
+  numberOfBlocksToCheck: number = 0;
 
   constructor(private renderer: Renderer2) { }
 
@@ -120,8 +120,10 @@ export class AppComponent implements OnInit, OnDestroy {
             this.transactions = [];
             // Update interfaceEnabled
             this.interfaceEnabled = true;
-            // Get transaction history
-            this.getTransactionsHistory(this.simpleFundContractAddress, this.numberOfBlocksToCheck);
+            // Get transaction history (another way to check blocks for transactions)
+            // this.getTransactionsHistory(this.simpleFundContractAddress, this.numberOfBlocksToCheck);
+            // Get past events
+            this.getPastEvents(this.simpleFundContractObject, "Fund", this.numberOfBlocksToCheck);
           } catch (e) {
             // Update interfaceEnabled
             this.interfaceEnabled = false;
@@ -236,30 +238,66 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  async getTransactionsHistory(address: string, numberOfBlocks: number = 1) {
+  // async getTransactionsHistory(address: string, numberOfBlocks: number = 1) {
 
-    let currentBlockNumber = await this.web3.eth.getBlockNumber();
-    let startBlockNumber = currentBlockNumber - numberOfBlocks + 1;
+  //   let currentBlockNumber = await this.web3.eth.getBlockNumber();
+  //   let startBlockNumber = currentBlockNumber - numberOfBlocks + 1;
 
-    for (let blockNumber = startBlockNumber; blockNumber <= currentBlockNumber; blockNumber++) {
-      //Show transaction text
-      this.transactionText = `Checking block ${blockNumber} (${blockNumber - startBlockNumber + 1} / ${numberOfBlocks})`;
-      let block = await this.web3.eth.getBlock(blockNumber);
-      if (block && block.transactions) {
-        for (let txHash of block.transactions) {
-          let tx = await this.web3.eth.getTransaction(txHash);
-          if (tx && tx.from && tx.to && tx.value && address.toLowerCase() == tx.to.toLowerCase()) {
-            this.transactions.push({ hash: txHash, from: tx.from, to: tx.to, value: tx.value });
-          }
-        }
+  //   for (let blockNumber = startBlockNumber; blockNumber <= currentBlockNumber; blockNumber++) {
+  //     //Show transaction text
+  //     this.transactionText = `Checking block ${blockNumber} (${blockNumber - startBlockNumber + 1} / ${numberOfBlocks})`;
+  //     let block = await this.web3.eth.getBlock(blockNumber);
+  //     if (block && block.transactions) {
+  //       for (let txHash of block.transactions) {
+  //         let tx = await this.web3.eth.getTransaction(txHash);
+  //         if (tx && tx.from && tx.to && tx.value && address.toLowerCase() == tx.to.toLowerCase()) {
+  //           this.transactions.push({ hash: txHash, from: tx.from, to: tx.to, value: tx.value });
+  //         }
+  //       }
+  //     }
+  //   }
+
+  //   // Hide transaction text
+  //   this.transactionText = "";
+
+  //   // Get only needed number of transactions and reverse array
+  //   this.transactions = this.transactions.slice((-1) * this.numberOfLatestTransactions).reverse();
+
+  // }
+
+  async getPastEvents(contract: any, eventName: string, numberOfBlocks: number = 0) {
+
+    let currentBlockNumber = 0;
+    let startBlockNumber = 0;
+
+    // Calculate start block number
+    if (numberOfBlocks <= 0) {
+      startBlockNumber = 0;
+    } else {
+      currentBlockNumber = await this.web3.eth.getBlockNumber();
+      startBlockNumber = currentBlockNumber - numberOfBlocks + 1;
+      if (startBlockNumber < 0) {
+        startBlockNumber = 0;
       }
     }
 
-    // Hide transaction text
-    this.transactionText = "";
+    // Show transaction text
+    this.transactionText = "Checking history...";
 
-    // Get only needed number of transactions and reverse array
-    this.transactions = this.transactions.slice((-1) * this.numberOfLatestTransactions).reverse();
+    contract.getPastEvents(eventName, { fromBlock: startBlockNumber, toBlock: "latest" })
+      .then((events: any) => {
+        // Loop through all relevant events and extract needed data
+        for (let ev of events) {
+          if (ev && ev.returnValues["_from"] && ev.returnValues["_to"] && ev.returnValues["_value"]) {
+            this.transactions.push({ hash: ev.transactionHash, from: ev.returnValues["_from"], to: ev.returnValues["_to"], value: ev.returnValues["_value"] });
+          }
+        }
+        // Hide transaction text
+        this.transactionText = "";
+        // Get only needed number of transactions and reverse array
+        this.transactions = this.transactions.slice((-1) * this.numberOfLatestTransactions).reverse();
+      })
+      .catch((error: any) => this.handleTransactionError(error))
 
   }
 

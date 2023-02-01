@@ -20,6 +20,7 @@ contract SimpleFundContract {
     address private immutable i_owner;
 
     // Events
+    event Fund(address indexed _from, address indexed _to, uint256 _value);
 
     // Modifiers
     modifier onlyOwner {
@@ -55,6 +56,7 @@ contract SimpleFundContract {
     function fund() public payable {
         s_funders.push(msg.sender);
         s_addressToAmountFunded[msg.sender] = msg.value;
+        emit Fund(msg.sender, address(this), msg.value);
     }
 
     function withdraw() public onlyOwner {
