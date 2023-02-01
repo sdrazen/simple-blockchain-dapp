@@ -4,7 +4,7 @@
 .angular/cache
 
 # firebase hosting
-.firebase/hosting
+.firebase/*.cache
 
 # compiled output
 /dist
