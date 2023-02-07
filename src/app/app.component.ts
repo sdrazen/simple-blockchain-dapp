@@ -12,6 +12,18 @@ declare let window: any;
 })
 export class AppComponent implements OnInit, OnDestroy {
 
+  // Checking for prerequisites
+  isMetamaskInstalled: boolean = false;
+  isNetworkCorrect: boolean = false;
+  isSiteConnected: boolean = false;
+
+  // Show/hide sections
+  showWelcome: boolean = true;
+  showInfo: boolean = false;
+  showGeneral: boolean = false;
+  showFunding: boolean = false;
+  showTransactions: boolean = false;
+
   // General
   web3: Web3;
   netId: number = -1;
@@ -52,7 +64,7 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(private renderer: Renderer2) { }
 
   async ngOnInit() {
-    // Init
+    // Check
     await this.init();
     // Listen for Metamask changes
     this.listenForMetamaskChanges();
@@ -65,75 +77,91 @@ export class AppComponent implements OnInit, OnDestroy {
 
   async init() {
 
-    if (window.ethereum === undefined) {
-      // Update interfaceEnabled
-      this.interfaceEnabled = false;
-      // Reset inerface
-      this.resetInterface();
-      // Alert Danger
-      this.showAlertDanger("MetaMask NOT detected! Please innstall MetaMask.")
-    } else {
-      this.web3 = new Web3(window.ethereum);
-      this.netId = await this.web3.eth.net.getId();
-      if (this.netId == 1) {
-        this.networkName = "Ethereum Main Network (Mainnet)";
-      } else if (this.netId == 5) {
-        this.networkName = "Goerli Testnet Network";
-      } else if (this.netId == 5777) {
-        this.networkName = "Ganache (local blockchain)";
-      } else {
-        this.networkName = "Unknown Network";
-      }
-      if (this.netId != 5 && this.netId != 5777) {
+    try {
+      if (window.ethereum === undefined) {
+        // Metamask not insalled
+        this.isMetamaskInstalled = false;
         // Update interfaceEnabled
         this.interfaceEnabled = false;
         // Reset inerface
         this.resetInterface();
         // Alert Danger
-        this.showAlertDanger("MetaMask NOT connected to Goerli Testnet Network or Ganache (local blockchain). Please choose one of those two networks in Your MetaMask.")
+        this.showAlertDanger("MetaMask NOT detected! Please innstall MetaMask.")
       } else {
-        const accounts = await this.web3.eth.getAccounts();
-        if (typeof accounts[0] === 'undefined') {
+        // Meamask is installed
+        this.isMetamaskInstalled = true;
+        this.web3 = new Web3(window.ethereum);
+        this.netId = await this.web3.eth.net.getId();
+        if (this.netId == 1) {
+          this.networkName = "Ethereum Main Network (Mainnet)";
+        } else if (this.netId == 5) {
+          this.networkName = "Goerli Testnet Network";
+        } else if (this.netId == 5777) {
+          this.networkName = "Ganache (local blockchain)";
+        } else {
+          this.networkName = "Unknown Network";
+        }
+        if (this.netId != 5 && this.netId != 5777) {
+          // Network not correct
+          this.isNetworkCorrect = false;
           // Update interfaceEnabled
           this.interfaceEnabled = false;
           // Reset inerface
           this.resetInterface();
           // Alert Danger
-          this.showAlertDanger("This site is NOT connected to MetaMask. Please connect this site to Your MetaMask.")
+          this.showAlertDanger("MetaMask NOT connected to Goerli Testnet Network or Ganache (local blockchain). Please choose one of those two networks in Your MetaMask.")
         } else {
-          this.accountAddress = accounts[0];
-          const accountBalance = await this.web3.eth.getBalance(accounts[0]);
-          this.accountBalance = this.web3.utils.fromWei(accountBalance);
-          try {
-            // SimpleFundContract contract
-            this.simpleFundContractObject = new this.web3.eth.Contract(SimpleFundContractJson.abi as AbiItem[], SimpleFundContractJson.networks[this.netId].address);
-            this.simpleFundContractAddress = this.simpleFundContractObject.options.address;
-            const simpleFundContractBalance = await this.web3.eth.getBalance(this.simpleFundContractAddress);
-            this.simpleFundContractBalance = this.web3.utils.fromWei(simpleFundContractBalance);
-            // PriceConsumerV3 contract
-            this.priceConsumerV3Object = new this.web3.eth.Contract(PriceConsumerV3Json.abi as AbiItem[], PriceConsumerV3Json.networks[this.netId].address);
-            // Get current ETH/USD price
-            await this.getEthUsdPrice(8);
-            // Get list of funders
-            await this.getFunders();
-            // Reset transaction history
-            this.transactions = [];
-            // Update interfaceEnabled
-            this.interfaceEnabled = true;
-            // Get transaction history (another way to check blocks for transactions)
-            // this.getTransactionsHistory(this.simpleFundContractAddress, this.numberOfBlocksToCheck);
-            // Get past events
-            this.getPastEvents(this.simpleFundContractObject, "Fund", this.numberOfBlocksToCheck);
-          } catch (e) {
+          // Network is correct
+          this.isNetworkCorrect = true;
+          const accounts = await this.web3.eth.getAccounts();
+          if (typeof accounts[0] === 'undefined') {
+            // Site not connected
+            this.isSiteConnected = false;
             // Update interfaceEnabled
             this.interfaceEnabled = false;
             // Reset inerface
             this.resetInterface();
             // Alert Danger
-            this.showAlertDanger("Contracts are NOT deployed to this network or there was a problem interacting with contracts.")
+            this.showAlertDanger("This site is NOT connected to MetaMask. Please connect this site to Your MetaMask.")
+          } else {
+            // Site is connected
+            this.isSiteConnected = true;
+            this.accountAddress = accounts[0];
+            const accountBalance = await this.web3.eth.getBalance(accounts[0]);
+            this.accountBalance = this.web3.utils.fromWei(accountBalance);
+            try {
+              // SimpleFundContract contract
+              this.simpleFundContractObject = new this.web3.eth.Contract(SimpleFundContractJson.abi as AbiItem[], SimpleFundContractJson.networks[this.netId].address);
+              this.simpleFundContractAddress = this.simpleFundContractObject.options.address;
+              const simpleFundContractBalance = await this.web3.eth.getBalance(this.simpleFundContractAddress);
+              this.simpleFundContractBalance = this.web3.utils.fromWei(simpleFundContractBalance);
+              // PriceConsumerV3 contract
+              this.priceConsumerV3Object = new this.web3.eth.Contract(PriceConsumerV3Json.abi as AbiItem[], PriceConsumerV3Json.networks[this.netId].address);
+              // Get current ETH/USD price
+              await this.getEthUsdPrice(8);
+              // Get list of funders
+              await this.getFunders();
+              // Reset transaction history
+              this.transactions = [];
+              // Update interfaceEnabled
+              this.interfaceEnabled = true;
+              // Get transaction history (another way to check blocks for transactions)
+              // this.getTransactionsHistory(this.simpleFundContractAddress, this.numberOfBlocksToCheck);
+              // Get past events
+              this.getPastEvents(this.simpleFundContractObject, "Fund", this.numberOfBlocksToCheck);
+            } catch (e) {
+              // Update interfaceEnabled
+              this.interfaceEnabled = false;
+              // Reset inerface
+              this.resetInterface();
+              // Alert Danger
+              this.showAlertDanger("Contracts are NOT deployed to this network or there was a problem interacting with contracts.")
+            }
           }
         }
       }
+    } catch (e) {
+      this.handleInitError(e);
     }
 
   }
@@ -274,10 +302,14 @@ export class AppComponent implements OnInit, OnDestroy {
     if (numberOfBlocks <= 0) {
       startBlockNumber = 0;
     } else {
-      currentBlockNumber = await this.web3.eth.getBlockNumber();
-      startBlockNumber = currentBlockNumber - numberOfBlocks + 1;
-      if (startBlockNumber < 0) {
-        startBlockNumber = 0;
+      try {
+        currentBlockNumber = await this.web3.eth.getBlockNumber();
+        startBlockNumber = currentBlockNumber - numberOfBlocks + 1;
+        if (startBlockNumber < 0) {
+          startBlockNumber = 0;
+        }
+      } catch (e) {
+        this.handlePastEventsError(e);
       }
     }
 
@@ -297,7 +329,7 @@ export class AppComponent implements OnInit, OnDestroy {
         // Get only needed number of transactions and reverse array
         this.transactions = this.transactions.slice((-1) * this.numberOfLatestTransactions).reverse();
       })
-      .catch((error: any) => this.handleTransactionError(error))
+      .catch((e: any) => this.handlePastEventsError(e))
 
   }
 
@@ -357,6 +389,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this.simpleFundContractBalance = "0";
     this.ethFundAmount = "0.1";
     this.funders = [];
+    this.transactions = [];
   }
 
   showAlertDanger(text: string) {
@@ -395,8 +428,46 @@ export class AppComponent implements OnInit, OnDestroy {
     this.showAlertDanger(e.message);
   }
 
+  handlePastEventsError(e: any) {
+    // Update transactionInProgress
+    this.isTransactionInProgress = false;
+    // Update interfaceEnabled
+    this.interfaceEnabled = true;
+    // Alert Danger
+    this.showAlertDanger(e.message);
+  }
+
+  handleInitError(e: any) {
+    // Update transactionInProgress
+    this.isTransactionInProgress = false;
+    // Update interfaceEnabled
+    this.interfaceEnabled = true;
+    // Alert Danger
+    this.showAlertDanger(e.message);
+  }
+
   convertFromWei(value: string): string {
     return this.web3.utils.fromWei(value);
+  }
+
+  onHomeClick() {
+    this.showHideSections(1);
+  }
+
+  onShowInfoClick() {
+    this.showHideSections(2);
+  }
+
+  onGetStartedClick() {
+    this.showHideSections(3);
+  }
+
+  showHideSections(index: number) {
+    this.showWelcome = (index == 1);
+    this.showInfo = (index == 2);
+    this.showGeneral = (index == 3);
+    this.showFunding = (index == 3);
+    this.showTransactions = (index == 3);
   }
 
 }

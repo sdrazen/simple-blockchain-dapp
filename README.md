@@ -49,6 +49,8 @@ This code is also a good example on how to use Chainlink for decentralized appli
 
 This application is live on the cloud and can be seen [here](https://simple-blockchain-dapp.web.app/).
 
-### Screenshot
+### Screenshots
 
-![Simple Blockchain Dapp](./src/assets/img/screenshot.jpg)
+![Simple Blockchain Dapp](./src/assets/img/screenshot2.jpg)
+
+![Simple Blockchain Dapp](./src/assets/img/screenshot3.jpg)

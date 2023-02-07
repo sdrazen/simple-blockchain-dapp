@@ -1,6 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 
+html {
+  background: #303030;
+}
+
 body {
-  padding: 20px;
+  background-color: #303030;
+  color: white;
+  flex: 0 1 auto;
   align-self: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 }

@@ -1,3 +1,127 @@
+* {
+  margin: 0;
+}
+
+.topnav {
+  overflow: hidden;
+  background-color: #222;
+  position: fixed;
+  padding: 20px;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+.topnav-brand {
+  font-family: cursive;
+  font-size: 2rem;
+  margin-top: 10px;
+  margin-left: 4px;
+  cursor: pointer;
+}
+
+.topnav-brand-yellow {
+  color: yellow;
+}
+
+.topnav img,
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  text-decoration: none;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+.topnav-right {
+  background-color: #222;
+  float: right;
+}
+
+.topnav-right a {
+  margin-top: 3px;
+  width: 120px;
+  padding: 10px;
+  color: #f2f2f2;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.topnav-right button {
+  width: 100px;
+  display: inline-block;
+  border-radius: 20px;
+  margin-top: 7px;
+}
+
+.leftnav {
+  overflow: hidden;
+  background-color: #303030;
+  position: fixed;
+  padding: 20px;
+  top: 300px;
+  left: 0;
+  width: 20%;
+  z-index: 100;
+}
+
+.img-eth {
+  width: 300px;
+  opacity: 0.2;
+}
+
+.img-eth-small {
+  height: 40px;
+  border-radius: 50%;
+  margin-top: 4px;
+}
+
+table,
+thead,
+tbody,
+th,
+tr,
+td,
+input,
+div,
+.panel-primary,
+.list-group-item {
+  background-color: #303030;
+  color: white;
+}
+
+.panel-heading {
+  background-color: #505050;
+  color: white;
+}
+
+.panel-primary,
+.panel-heading {
+  border-color: white;
+}
+
+.btn-fund {
+  width: 100px;
+  margin-left: 8px;
+  border-radius: 20px;
+}
+
+.btn-transparent {
+  background-color: #303030;
+  color: white;
+}
+
 .padding-bottom-10 {
   padding-bottom: 10px;
 }
@@ -6,23 +130,12 @@
   padding-top: 10px;
 }
 
-.padding-left-30 {
-  padding-left: 30px;
-}
-
 .width-100 {
   width: 100px;
 }
 
-.width-200 {
-  width: 200px;
-}
-
-.panel-margin {
-  margin-top: 20px;
-  margin-left: 200px;
-  margin-right: 200px;
-  margin-bottom: 20px;
+.margin-right-100 {
+  margin-right: 100px;
 }
 
 .align-center {
@@ -30,10 +143,180 @@
 }
 
 .inline-block {
-  display:inline-block;
+  display: inline-block;
 }
 
-.title {
-  background-color: #337AB7;
-  color: white;
+.welcome {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 350px;
+}
+
+.welcome-left {
+  margin-left: 400px;
+  font-size: 3rem;
+  line-height: 200%;
+}
+
+.welcome-right {
+  font-size: 3rem;
+  line-height: 200%;
+  margin-left: -100px;
+}
+
+.info {
+  margin-top: 350px;
+  margin-left: 400px;
+  padding-right: 200px;
+  text-align: justify;
+  font-size: 1.6rem;
+}
+
+.general {
+  margin-top: 180px;
+  margin-left: 400px;
+  padding-right: 200px;
+}
+
+.funding,
+.transactions {
+  margin-top: -1px;
+  margin-left: 400px;
+  padding-right: 200px;
+}
+
+.alert {
+  margin-top: 10px;
+  margin-left: 400px;
+  margin-right: 200px;
+  color: black;
+  font-weight: 600;
+}
+
+.alert-danger {
+  background-color: rgb(251, 207, 214);
+}
+
+.alert-info {
+  background-color: rgb(202, 232, 251);
+}
+
+.alert-success {
+  background-color: rgb(202, 254, 202);
+}
+
+.table {
+  font-size: 1.2rem;
+}
+
+.contract-balance {
+  padding-top: 10px;
+  padding-bottom: 14px;
+  font-size: 3rem;
+  font-weight: bold;
+}
+
+.link {
+  font-size: 2rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.glyphicon-ok {
+  color: lightgreen;
+}
+
+.glyphicon-remove {
+  color: lightpink;
+}
+
+@media (max-width: 1750px) {
+
+  .leftnav {
+    display: none;
+  }
+
+  .welcome-left,
+  .welcome-right {
+    margin-left: 20px;
+  }
+
+  .info,
+  .general {
+    margin-top: 180px;
+    margin-left: 20px;
+    padding-right: 20px;
+  }
+
+  .funding,
+  .transactions {
+    margin-left: 20px;
+    padding-right: 20px;
+  }
+
+  .alert {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+}
+
+@media (max-width: 1280px) {
+
+  .transactions,
+  .contract-funders {
+    display: none;
+  }
+
+}
+
+@media (max-width: 800px) {
+
+  .topnav-right a {
+    display: none;
+  }
+
+  .welcome-left,
+  .welcome-right {
+    font-size: 2rem;
+  }
+  
+  .link {
+    font-size: 1.6rem;
+  }
+    
+}
+
+@media (max-width: 600px) {
+
+  .welcome {
+    margin-top: 180px;
+  }
+
+  .info,
+  .general {
+    margin-top: 120px;
+  }
+
+  .welcome-left,
+  .welcome-right {
+    font-size: 1.5rem;
+  }
+
+  .link {
+    font-size: 1.3rem;
+  }
+
+}
+
+@media (max-width: 400px) {
+
+  .topnav img {
+    display: none;
+  }
+
+  .welcome {
+    grid-template-columns: 2fr 1fr;
+  }
+
 }

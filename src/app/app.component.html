@@ -1,15 +1,53 @@
-<!-- Title -->
-<div class="panel panel-primary panel-margin">
-  <div class="title panel-body">
-    <div class="align-center">
-      <h1><b>SIMPLE BLOCKCHAIN DECENTRALIZED APPLICATION</b></h1>
+<!-- Navigation -->
+<div class="topnav">
+  <img class="img-eth-small" src="../assets/img/eth-small.png">
+  <a class="topnav-brand" (click)="onHomeClick()">
+    Blockchain<span class="topnav-brand-yellow">DAPP</span>
+  </a>
+  <div class="topnav-right">
+    <a (click)="onHomeClick()">HOME</a>
+    <a (click)="onShowInfoClick()">INFO</a>
+    <a href="https://goerlifaucet.com/" target="_blank">FAUCET</a>
+    <a href="https://goerli.etherscan.io/" target="_blank" class="margin-right-100">ETHERSCAN</a>
+    <button (click)="onGetStartedClick()" class="btn btn-primary">Get started</button>
+  </div>
+</div>
+
+<div class="leftnav">
+  <img class="img-eth" src="../assets/img/eth.png">
+</div>
+
+<!-- Welcome -->
+<div class="welcome" *ngIf="showWelcome">
+  <div class="welcome-left">
+    <div>
+      Install <a class="link" href="https://metamask.io/" target="_blank">METAMASK</a>
+    </div>
+    <div>
+      Choose Goerli or Ganache
+    </div>
+    <div>
+      Connect site to MetaMask
+    </div>
+    <div>
+      ...and finally <a class="link" (click)="onGetStartedClick()">GET STARTED</a>
+    </div>
+  </div>
+  <div class="welcome-right">
+    <div>
+      <span class="glyphicon glyphicon-ok" *ngIf="isMetamaskInstalled"></span><span class="glyphicon glyphicon-remove" *ngIf="!isMetamaskInstalled"></span>
+    </div>
+    <div>
+      <span class="glyphicon glyphicon-ok" *ngIf="isNetworkCorrect"></span><span class="glyphicon glyphicon-remove" *ngIf="!isNetworkCorrect"></span>
+    </div>
+    <div>
+      <span class="glyphicon glyphicon-ok" *ngIf="isSiteConnected"></span><span class="glyphicon glyphicon-remove" *ngIf="!isSiteConnected"></span>
     </div>
   </div>
 </div>
 
-<!-- Alert Info -->
-<div class="alert alert-info alert-dismissable panel-margin">
-  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+<!-- Info -->
+<div class="info" *ngIf="showInfo">
   <strong>How to use?</strong>
   <br><br>
   This application works with two testnet networks: Goerli Testnet Network and Ganache (local blockchain). Choose Your preferred testnet network in MetaMask (e. g. Goerli) with one or more accounts that already have some fake ETH, connect site to MetaMask, in application input some ETH amount into the inputbox and click <i>Fund</i> button next to it. Observe how Your account balance decreases by that fund amount and how Your address appears in the <i>Latest contract funders</i> list on the right hand side. At the same time the smart contract's balance increases by the same amount. When transaction completes, a short message will be visible for a few seconds to inform You of completition.
@@ -20,96 +58,106 @@
 </div>
 
 <!-- General Data -->
-<div class="panel panel-primary panel-margin">
-  <div class="panel-heading">
-    <h3 class="panel-title">General data</h3>
-  </div>
-  <div class="panel-body">
-    <div class="align-center">
-      <b>Connected network: {{ networkName }}</b>
+<div class="general" *ngIf="showGeneral">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3 class="panel-title">Connected network</h3>
+    </div>
+    <div class="panel-body">
+      <div class="align-center">
+        <b>{{ networkName }}</b>
+      </div>
     </div>
   </div>
 </div>
 
 <!-- Smart Contract Funding -->
-<div class="panel panel-primary panel-margin">
-  <div class="panel-heading">
-    <h3 class="panel-title">Smart contract funding</h3>
-  </div>
-  <div class="row">
-    <!-- Show Account -->
-    <div class="col-md-4 padding-top-10 padding-bottom-10 padding-left-30">
-      <b>Account address:</b><br>
-      {{ accountAddress }}
-      <br><br>
-      <b>Account balance (ETH):</b><br>
-      {{ accountBalance }}
-      <br><br>
-      <div *ngIf="transactionText != ''">
-        <b>Transaction status:</b><br>
-        {{ transactionText }}
-      </div>
+<div class="funding" *ngIf="showFunding">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3 class="panel-title">Smart contract funding</h3>
     </div>
-    <!-- Show Contract Balance and Transaction Interaction -->
-    <div class="col-md-4 padding-top-10 padding-bottom-10 align-center">
-      Contract so far funded with
-      <h2><b>{{ simpleFundContractBalance }} ETH</b></h2>
-      <div class="input-group padding-top-10 inline-block">
-        <input type="text" class="form-control width-100" name="ethFundAmount" placeholder="0.1" [(ngModel)]="ethFundAmount">
-        <button id="fund" [disabled]="focusChanged || !interfaceEnabled" type="button" class="btn btn-primary width-100" (click)="onFundClick()">Fund</button>
-      </div>
-      <div class="padding-top-10">
-        <i>Latest ETH/USD price: ${{ priceRounded }}</i>
-      </div>
-    </div>
-    <!-- Show Transaction Data (funders) -->
-    <div class="col-md-4 padding-top-10 padding-bottom-10">
-      <b>Latest contract funders:</b><br><br>
-      <div *ngFor="let funder of funders">
-        {{ funder }}
+    <div class="panel-body">
+      <div class="row">
+        <!-- Show Account -->
+        <div class="col-md-4 padding-top-10 padding-bottom-10">
+          <b>Account address:</b><br>
+          {{ accountAddress }}
+          <br><br>
+          <b>Account balance (ETH):</b><br>
+          {{ accountBalance }}
+          <br><br>
+          <div *ngIf="transactionText != ''">
+            <b>Transaction status:</b><br>
+            {{ transactionText }}
+          </div>
+        </div>
+        <!-- Show Contract Balance and Transaction Interaction -->
+        <div class="col-md-4 padding-top-10 padding-bottom-10 align-center">
+          Contract so far funded with
+          <div class="contract-balance">
+            {{ simpleFundContractBalance }} ETH
+          </div>
+          <div class="input-group inline-block">
+            <input type="text" class="form-control width-100" name="ethFundAmount" placeholder="0.1" [(ngModel)]="ethFundAmount">
+            <button id="fund" [disabled]="focusChanged || !interfaceEnabled" type="button" class="btn btn-primary btn-fund" (click)="onFundClick()">Fund</button>
+          </div>
+          <div class="padding-top-10">
+            <i>Latest ETH/USD price: ${{ priceRounded }}</i>
+          </div>
+        </div>
+        <!-- Show Transaction Data (funders) -->
+        <div class="contract-funders col-md-4 padding-top-10 padding-bottom-10">
+          <b>Latest contract funders:</b><br><br>
+          <div *ngFor="let funder of funders">
+            {{ funder }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Transactions -->
-<div class="panel panel-primary panel-margin" *ngIf="transactions.length>0">
-  <div class="panel-heading">
-    <h3 class="panel-title">Latest transactions</h3>
-  </div>
-  <div class="panel-body">
-    <table class="table table-striped table-hover table-condensed table-bordered">
-      <thead>
-        <tr>
-          <th>Transaction hash</th>
-          <th>From</th>
-          <th>To</th>
-          <th>Value (ETH)</th>
-        </tr>
-      </thead>
-      <tbody *ngFor="let transaction of transactions">
-        <tr>
-          <td>{{ transaction.hash }}</td>
-          <td>{{ transaction.from }}</td>
-          <td>{{ transaction.to }}</td>
-          <td>{{ convertFromWei(transaction.value) }}</td>
-        </tr>
-      </tbody>
-    </table>
+<div class="transactions" *ngIf="showTransactions">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3 class="panel-title">Latest transactions</h3>
+    </div>
+    <div class="panel-body">
+      <table class="table table-striped table-hover table-condensed">
+        <thead>
+          <tr>
+            <th>Transaction hash</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Eth</th>
+          </tr>
+        </thead>
+        <tbody *ngFor="let transaction of transactions">
+          <tr>
+            <td>{{ transaction.hash }}</td>
+            <td>{{ transaction.from }}</td>
+            <td>{{ transaction.to }}</td>
+            <td>{{ convertFromWei(transaction.value) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
 <!-- Alert Danger -->
-<div class="alert alert-danger panel-margin" *ngIf="dangerAlertText != ''">
+<div class="alert alert-danger" *ngIf="showGeneral && dangerAlertText != ''">
   {{ dangerAlertText }}
 </div>
 
 <!-- Alert Success -->
-<div class="alert alert-success panel-margin" *ngIf="successAlertText != ''">
+<div class="alert alert-success" *ngIf="showGeneral && successAlertText != ''">
   {{ successAlertText }}
 </div>
 
 <!-- Alert Info -->
-<div class="alert alert-info panel-margin" *ngIf="infoAlertText != ''">
+<div class="alert alert-info" *ngIf="showGeneral && infoAlertText != ''">
   {{ infoAlertText }}
 </div>
